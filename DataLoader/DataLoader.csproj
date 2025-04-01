@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="mockdata\contacts2.csv" />
+    <None Remove="mockdata\contacts3.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="mockdata\contacts1.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="mockdata\contacts2.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="mockdata\contacts3.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Debug\net8.0\mockdata\accounts1.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="bin\Debug\net8.0\mockdata\contacts1.csv" />
+    <None Include="bin\Debug\net8.0\mockdata\contacts2.csv" />
+    <None Include="bin\Debug\net8.0\mockdata\contacts3.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.3" />
+  </ItemGroup>
+
+</Project>
