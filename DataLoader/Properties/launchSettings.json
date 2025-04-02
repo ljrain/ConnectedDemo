@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DataLoader": {
+      "commandName": "Project",
+      "commandLineArgs": "AuthType=ClientSecret;ClientId=70dbbbb5-71bd-45d5-a23b-f23149d30c73;ClientSecret=1F58Q~F8aLc1gZ0MUnCNxypvUUm7fPNhQcq5JbT1;Url=https://ljr-dev1.crm9.dynamics.com/"
+    }
+  }
+}

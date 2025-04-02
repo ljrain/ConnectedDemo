@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\lourainaldi\\source\\repos\\ConnectedDemo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{01F8046B-0EDA-4B0C-88BB-E24E7327C9F2}|DataLoader\\DataLoader.csproj|c:\\users\\lourainaldi\\source\\repos\\connecteddemo\\dataloader\\dataingestor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{01F8046B-0EDA-4B0C-88BB-E24E7327C9F2}|DataLoader\\DataLoader.csproj|solutionrelative:dataloader\\dataingestor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{01F8046B-0EDA-4B0C-88BB-E24E7327C9F2}|DataLoader\\DataLoader.csproj|c:\\users\\lourainaldi\\source\\repos\\connecteddemo\\dataloader\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{01F8046B-0EDA-4B0C-88BB-E24E7327C9F2}|DataLoader\\DataLoader.csproj|solutionrelative:dataloader\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01F8046B-0EDA-4B0C-88BB-E24E7327C9F2}|DataLoader\\DataLoader.csproj|c:\\users\\lourainaldi\\source\\repos\\connecteddemo\\dataloader\\dataingestor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01F8046B-0EDA-4B0C-88BB-E24E7327C9F2}|DataLoader\\DataLoader.csproj|solutionrelative:dataloader\\dataingestor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,26 +30,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "DataIngestor.cs",
               "DocumentMoniker": "C:\\Users\\lourainaldi\\source\\repos\\ConnectedDemo\\DataLoader\\DataIngestor.cs",
               "RelativeDocumentMoniker": "DataLoader\\DataIngestor.cs",
               "ToolTip": "C:\\Users\\lourainaldi\\source\\repos\\ConnectedDemo\\DataLoader\\DataIngestor.cs",
               "RelativeToolTip": "DataLoader\\DataIngestor.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAApwCEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEoAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-02T16:26:22.047Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\lourainaldi\\source\\repos\\ConnectedDemo\\DataLoader\\Program.cs",
               "RelativeDocumentMoniker": "DataLoader\\Program.cs",
               "ToolTip": "C:\\Users\\lourainaldi\\source\\repos\\ConnectedDemo\\DataLoader\\Program.cs",
               "RelativeToolTip": "DataLoader\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-01T14:18:31.792Z",
               "EditorCaption": ""

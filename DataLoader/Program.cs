@@ -1,14 +1,27 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Microsoft.Extensions.Configuration;
 
-Console.WriteLine("Data Loader (Connected Demo)");
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        Console.WriteLine("Data Loader (Connected Demo)");
 
-string CONNECTION_STRING = "AuthType=ClientSecret;ClientId=70dbbbb5-71bd-45d5-a23b-f23149d30c73;ClientSecret=1F58Q~F8aLc1gZ0MUnCNxypvUUm7fPNhQcq5JbT1;Url=https://ljr-dev1.crm9.dynamics.com/";
+        if (args.Length < 1)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Please provide the Dataverse connection string as a command line argument.");
+            Console.ResetColor();
+            return;
+        }
 
-string MOCK_FILE_PATH = "mockdata";
+        string CONNECTION_STRING = args[0];
 
-DataLoader.DataIngestor dataIngestor = new DataLoader.DataIngestor(CONNECTION_STRING, MOCK_FILE_PATH);
-dataIngestor.Execute();
+        string MOCK_FILE_PATH = "mockdata";
 
+        DataLoader.DataIngestor dataIngestor = new DataLoader.DataIngestor(CONNECTION_STRING, MOCK_FILE_PATH);
+        dataIngestor.Execute();
 
-Console.WriteLine("Data Loader (Connected Demo) - Done");
+        Console.WriteLine("Data Loader (Connected Demo) - Done");
+    }
+}
