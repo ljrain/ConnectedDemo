@@ -75,7 +75,7 @@ namespace DataLoader
         /// <param name="message">The message to write.</param>
         /// <param name="color">The color to use.</param>
         /// <param name="overwrite">Whether to overwrite the current line.</param>
-        private void WriteColoredMessage(string message, ConsoleColor color, bool overwrite = false)
+        private void WriteMessage(string message, bool overwrite = false)
         {
             if (overwrite)
             {
@@ -83,9 +83,7 @@ namespace DataLoader
                 Console.Write(new string(' ', Console.WindowWidth)); // Clear the line
                 Console.SetCursorPosition(0, Console.CursorTop - 1); // Move cursor back to the start of the line
             }
-            Console.ForegroundColor = color;
             Console.WriteLine(message);
-            Console.ResetColor();
         }
 
         /// <summary>
@@ -113,13 +111,13 @@ namespace DataLoader
                     }
                     else
                     {
-                        WriteColoredMessage("No accounts found.", ConsoleColor.Yellow);
+                        WriteMessage("No accounts found.");
                         return null;
                     }
                 }
                 else
                 {
-                    WriteColoredMessage("Service client is not ready.", ConsoleColor.Red);
+                    WriteMessage("Service client is not ready.");
                     return null;
                 }
             }
@@ -130,7 +128,7 @@ namespace DataLoader
         /// </summary>
         public void AddContactsToAccountsFromMockData()
         {
-            WriteColoredMessage("AddContactsToAccountsFromMockData is running", ConsoleColor.Green);
+            WriteMessage("AddContactsToAccountsFromMockData is running");
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -138,17 +136,17 @@ namespace DataLoader
             Entity? randomAccount = GetRandomAccount();
             if (randomAccount == null)
             {
-                WriteColoredMessage("No random account available.", ConsoleColor.Red);
+                WriteMessage("No random account available.");
                 return;
             }
-            WriteColoredMessage("Random account: " + randomAccount["name"], ConsoleColor.Yellow, true);
+            WriteMessage("Random account: " + randomAccount["name"], true);
             Stopwatch timer = new Stopwatch();
             timer.Start();
             using (serviceClient = new ServiceClient(ConnectionString))
             {
                 if (serviceClient.IsReady)
                 {
-                    WriteColoredMessage("Adding contacts to account: " + randomAccount["name"], ConsoleColor.Yellow, true);
+                    WriteMessage("Adding contacts to account: " + randomAccount["name"], true);
                     for (int i = 0; i < MaxRecords; i++)
                     {
                         Entity contact = new Entity("contact");
@@ -158,7 +156,7 @@ namespace DataLoader
                         contact["parentcustomerid"] = randomAccount.ToEntityReference();
                         Guid contactId = serviceClient.Create(contact);
                         contact = serviceClient.Retrieve("contact", contactId, new ColumnSet(true));
-                        WriteColoredMessage("Added contact: " + contact["fullname"], ConsoleColor.Yellow, true);
+                        WriteMessage("Added contact: " + contact["fullname"], true);
 
                         Entity task = new Entity("task");
                         task["subject"] = "Follow up with " + contact.Attributes["fullname"];
@@ -167,7 +165,7 @@ namespace DataLoader
                         task["scheduledend"] = DateTime.Now.AddDays(2);
                         task["regardingobjectid"] = contact.ToEntityReference();
                         Guid taskId = serviceClient.Create(task);
-                        WriteColoredMessage("Added task: " + task["subject"], ConsoleColor.Yellow, true);
+                        WriteMessage("Added task: " + task["subject"], true);
 
                         Entity appointment = new Entity("appointment");
                         appointment["subject"] = "Meeting with " + contact.Attributes["fullname"];
@@ -176,12 +174,12 @@ namespace DataLoader
                         appointment["scheduledend"] = DateTime.Now.AddDays(4);
                         appointment["regardingobjectid"] = contact.ToEntityReference();
                         Guid appointmentId = serviceClient.Create(appointment);
-                        WriteColoredMessage("Added appointment: " + appointment["subject"], ConsoleColor.Yellow, true);
+                        WriteMessage("Added appointment: " + appointment["subject"], true);
                     }
                 }
             }
             timer.Stop();
-            WriteColoredMessage("AddContactsToAccountsFromMockData took " + timer.Elapsed.TotalMilliseconds + " milliseconds.", ConsoleColor.Green);
+            WriteMessage("AddContactsToAccountsFromMockData took " + timer.Elapsed.TotalMilliseconds + " milliseconds.");
         }
 
         private string GetRandomNumberAsString()
@@ -195,7 +193,7 @@ namespace DataLoader
         /// </summary>
         public void LoadNewAccounts()
         {
-            WriteColoredMessage("LoadNewAccounts is running", ConsoleColor.Green);
+            WriteMessage("LoadNewAccounts is running");
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             int i = 0;

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DataLoader")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+17648dbce26d8b1cb6f43602eeabb3dd83cd2b74")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+804950e64b14a8f89cd9b83b0b95665af0c1b1ee")]
 [assembly: System.Reflection.AssemblyProductAttribute("DataLoader")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DataLoader")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
