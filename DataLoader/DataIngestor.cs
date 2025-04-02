@@ -15,48 +15,100 @@ using CsvHelper.Configuration.Attributes;
 
 namespace DataLoader
 {
+    /// <summary>
+    /// Class responsible for data ingestion from mock data files to the CRM system.
+    /// </summary>
     internal class DataIngestor
     {
         #region "Properties"
 
+        /// <summary>
+        /// Gets or sets the connection string for the CRM system.
+        /// </summary>
         public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets or sets the path to the mock data files.
+        /// </summary>
         public string MockFilePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum number of records to process.
+        /// </summary>
         public int MaxRecords { get; set; } = 5;
 
-        public List<MockContact> MockContacts { get; set; }
-        public List<MockAccount> MockAccounts { get; set; } = new List<MockAccount>();
+        /// <summary>
+        /// Gets or sets the list of mock contacts.
+        /// </summary>
+        public List<MockContact> MockContacts { get; set; } = new List<MockContact>();
 
+        /// <summary>
+        /// Gets or sets the list of mock accounts.
+        /// </summary>
+        public List<MockAccount> MockAccounts { get; set; } = new List<MockAccount>();
 
         #endregion
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataIngestor"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string for the CRM system.</param>
+        /// <param name="mockFilePath">The path to the mock data files.</param>
         public DataIngestor(string connectionString, string mockFilePath)
         {
             ConnectionString = connectionString;
             MockFilePath = mockFilePath;
         }
 
+        /// <summary>
+        /// Executes the data ingestion process.
+        /// </summary>
         public void Execute()
         {
             AddContactsToAccountsFromMockData();
         }
 
         #region "Private routines"
+
+        /// <summary>
+        /// Writes a message to the console with the specified color.
+        /// </summary>
+        /// <param name="message">The message to write.</param>
+        /// <param name="color">The color to use.</param>
+        /// <param name="overwrite">Whether to overwrite the current line.</param>
+        private void WriteColoredMessage(string message, ConsoleColor color, bool overwrite = false)
+        {
+            if (overwrite)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write(new string(' ', Console.WindowWidth)); // Clear the line
+                Console.SetCursorPosition(0, Console.CursorTop - 1); // Move cursor back to the start of the line
+            }
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Loads the mock data from CSV files.
+        /// </summary>
         public void LoadMockData()
         {
             LoadCsvData();
-            // Use the contacts array to create contacts in the CRM system
         }
 
+        /// <summary>
+        /// Loads the CSV data into lists of mock contacts and accounts.
+        /// </summary>
         private void LoadCsvData()
         {
-            // Load the CSV data into a list of mock contacts
             var contacts = new List<MockContact>();
             string contactMockFile = Path.Combine(MockFilePath + @"\contacts1.csv");
             string accountMockFile = Path.Combine(MockFilePath + @"\accounts1.csv");
 
-            if (File.Exists(contactMockFile) == false)
+            if (!File.Exists(contactMockFile))
             {
-                Console.WriteLine("File not found: " + contactMockFile);
+                WriteColoredMessage("File not found: " + contactMockFile, ConsoleColor.Red);
                 return;
             }
 
@@ -73,105 +125,84 @@ namespace DataLoader
             }
             MockContacts = contacts;
 
-            // Load the CSV data into a list of mock accounts
-            List<MockAccount> accounts = new List<MockAccount>();
-
-            if (File.Exists(Path.Combine(accountMockFile)) == false)
+            if (!File.Exists(accountMockFile))
             {
-                Console.WriteLine("File not found: " + accountMockFile);
+                WriteColoredMessage("File not found: " + accountMockFile, ConsoleColor.Red);
+                return;
             }
-
-            config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                HasHeaderRecord = true,
-                PrepareHeaderForMatch = args => args.Header.ToLower(),
-            };
 
             using (var reader = new StreamReader(accountMockFile))
             using (var csv = new CsvReader(reader, config))
             {
-                accounts = csv.GetRecords<MockAccount>().ToList();
+                MockAccounts = csv.GetRecords<MockAccount>().ToList();
             }
-            MockAccounts = accounts;
         }
 
-        public Entity GetRandomAccount()
+        /// <summary>
+        /// Retrieves a random account from the CRM system.
+        /// </summary>
+        /// <returns>A random account entity.</returns>
+        public Entity? GetRandomAccount()
         {
-            Entity randomAccount = null;
             using (ServiceClient serviceClient = new ServiceClient(ConnectionString))
             {
                 if (serviceClient.IsReady)
                 {
-
-                    // Query to retrieve all accounts
                     QueryExpression query = new QueryExpression("account")
                     {
-                        ColumnSet = new ColumnSet(true) // Retrieve all columns
+                        ColumnSet = new ColumnSet(true)
                     };
 
                     EntityCollection accounts = serviceClient.RetrieveMultiple(query);
 
                     if (accounts.Entities.Count > 0)
                     {
-                        // Get a random account
                         Random random = new Random();
                         int randomIndex = random.Next(accounts.Entities.Count);
                         return accounts.Entities[randomIndex];
                     }
                     else
                     {
-                        Console.WriteLine("No accounts found.");
-                        return randomAccount;
+                        WriteColoredMessage("No accounts found.", ConsoleColor.Yellow);
+                        return null;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Service client is not ready.");
-                    return randomAccount;
+                    WriteColoredMessage("Service client is not ready.", ConsoleColor.Red);
+                    return null;
                 }
             }
         }
 
-
+        /// <summary>
+        /// Adds contacts to accounts from the mock data.
+        /// </summary>
         public void AddContactsToAccountsFromMockData()
         {
-            Console.WriteLine("AddContactsToAccountsFromMockData is running");
+            WriteColoredMessage("AddContactsToAccountsFromMockData is running", ConsoleColor.Green);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            // Load the CSV data into a list of mock accounts / contacts properties
             LoadCsvData();
 
             ServiceClient serviceClient;
-
-            //// Load accounts from Mock Data
-            
-            //using (serviceClient = new ServiceClient(ConnectionString))
-            //{
-            //    if (serviceClient.IsReady)
-            //    {
-            //        for (int i = 0; i < MockAccounts.Count; i++)
-            //        {
-            //            MockAccount ma = MockAccounts[i];
-            //            Entity account = new Entity("account");
-            //            account["name"] = ma.organization_name;
-            //            Guid actId = serviceClient.Create(account);
-            //        }
-            //    }
-            //}
-
-
-            // Load a random account
-            Entity randomAccount = GetRandomAccount();
-
+            Entity? randomAccount = GetRandomAccount();
+            if (randomAccount == null)
+            {
+                WriteColoredMessage("No random account available.", ConsoleColor.Red);
+                return;
+            }
+            WriteColoredMessage("Random account: " + randomAccount["name"], ConsoleColor.Yellow, true);
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
             using (serviceClient = new ServiceClient(ConnectionString))
             {
                 if (serviceClient.IsReady)
                 {
-                    // save 5 contacts to the random account
+                    WriteColoredMessage("Adding contacts to account: " + randomAccount["name"], ConsoleColor.Yellow, true);
                     for (int i = 0; i < MaxRecords; i++)
                     {
-                        // Get a random MockContact
                         Random random = new Random();
                         int randomIndex = random.Next(MockContacts.Count);
                         MockContact mc = MockContacts[randomIndex];
@@ -180,30 +211,41 @@ namespace DataLoader
                         contact["firstname"] = mc.first_name;
                         contact["lastname"] = mc.last_name;
                         contact["emailaddress1"] = mc.email;
-                        //contact["city"] = mc.city;
-                        //contact["country"] = mc.country_code;
                         contact["parentcustomerid"] = randomAccount.ToEntityReference();
                         Guid contactId = serviceClient.Create(contact);
-                        // Optionally, retrieve the created contact
                         contact = serviceClient.Retrieve("contact", contactId, new ColumnSet(true));
+                        WriteColoredMessage("Added contact: " + contact["fullname"], ConsoleColor.Yellow, true);
 
-                        // add a task and appointment to the contact
                         Entity task = new Entity("task");
                         task["subject"] = "Follow up with " + mc.first_name + " " + mc.last_name;
                         task["description"] = "Follow up with " + mc.first_name + " " + mc.last_name;
                         task["scheduledstart"] = DateTime.Now.AddDays(1);
                         task["scheduledend"] = DateTime.Now.AddDays(2);
-                        task["regardingobjectid"] = contact.ToEntityReference();  
+                        task["regardingobjectid"] = contact.ToEntityReference();
                         Guid taskId = serviceClient.Create(task);
+                        WriteColoredMessage("Added task: " + task["subject"], ConsoleColor.Yellow, true);
+
+                        Entity appointment = new Entity("appointment");
+                        appointment["subject"] = "Meeting with " + mc.first_name + " " + mc.last_name;
+                        appointment["description"] = "Meeting with " + mc.first_name + " " + mc.last_name;
+                        appointment["scheduledstart"] = DateTime.Now.AddDays(3);
+                        appointment["scheduledend"] = DateTime.Now.AddDays(4);
+                        appointment["regardingobjectid"] = contact.ToEntityReference();
+                        Guid appointmentId = serviceClient.Create(appointment);
+                        WriteColoredMessage("Added appointment: " + appointment["subject"], ConsoleColor.Yellow, true);
                     }
                 }
             }
+            timer.Stop();
+            WriteColoredMessage("AddContactsToAccountsFromMockData took " + timer.Elapsed.TotalMilliseconds + " milliseconds.", ConsoleColor.Green);
         }
 
-
+        /// <summary>
+        /// Loads new accounts into the CRM system.
+        /// </summary>
         public void LoadNewAccounts()
         {
-            Console.WriteLine("LoadNewAccounts is running");
+            WriteColoredMessage("LoadNewAccounts is running", ConsoleColor.Green);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             int i = 0;
@@ -222,47 +264,45 @@ namespace DataLoader
                     act["address1_country"] = "Test Country";
                     act["address1_latitude"] = 12.345678;
                     act["address1_longitude"] = 98.765432;
-                    act["ljr_accounttype"] = new OptionSetValue(100000001); // 100000001 = Customer
-                    act["ljr_accountcategory"] = new OptionSetValue(100000002); // 100000002 = Business
-                    act["ljr_accountsubtype"] = new OptionSetValue(100000003); // 100000003 = Corporate
-                    act["ljr_accountstatus"] = new OptionSetValue(100000004); // 100000004 = Active
+                    act["ljr_accounttype"] = new OptionSetValue(100000001);
+                    act["ljr_accountcategory"] = new OptionSetValue(100000002);
+                    act["ljr_accountsubtype"] = new OptionSetValue(100000003);
+                    act["ljr_accountstatus"] = new OptionSetValue(100000004);
 
                     Guid actId = serviceClient.Create(act);
-
                     act = serviceClient.Retrieve("account", actId, new ColumnSet(true));
                 }
             }
         }
+
         #endregion
 
-
-        // id,first_name,last_name,email,gender,city,country_code
+        /// <summary>
+        /// Represents a mock contact.
+        /// </summary>
         public class MockContact
         {
-            public string id { get; set; }
-            public string first_name { get; set; }
-            public string last_name { get; set; }
-            public string email { get; set; }
-            public string gender { get; set; }
-            public string City { get; set; }
-            public string city { get; set; }
-            public string country_code { get; set; }
+            public string id { get; set; } = string.Empty;
+            public string first_name { get; set; } = string.Empty;
+            public string last_name { get; set; } = string.Empty;
+            public string email { get; set; } = string.Empty;
+            public string gender { get; set; } = string.Empty;
+            public string City { get; set; } = string.Empty;
+            public string city { get; set; } = string.Empty;
+            public string country_code { get; set; } = string.Empty;
         }
 
-        //organization_name,founded_year,hq_city,revenue,employee_count,ceo_name,stock_symbol
+        /// <summary>
+        /// Represents a mock account.
+        /// </summary>
         public class MockAccount
         {
-            public string organization_name { get; set; }
+            public string organization_name { get; set; } = string.Empty;
             public int founded_year { get; set; }
-            public string hq_city { get; set; }
+            public string hq_city { get; set; } = string.Empty;
             public int employee_count { get; set; }
-
-            public string ceo_name { get; set; }
-
-            public string stock_symbol { get; set; }
+            public string ceo_name { get; set; } = string.Empty;
+            public string stock_symbol { get; set; } = string.Empty;
         }
-
-
-
     }
 }
