@@ -40,12 +40,12 @@ namespace DataLoader
         /// <summary>
         /// Gets or sets the list of mock contacts.
         /// </summary>
-        public List<MockContact> MockContacts { get; set; } = new List<MockContact>();
+        //public List<MockContact> MockContacts { get; set; } = new List<MockContact>();
 
         /// <summary>
         /// Gets or sets the list of mock accounts.
         /// </summary>
-        public List<MockAccount> MockAccounts { get; set; } = new List<MockAccount>();
+        //public List<MockAccount> MockAccounts { get; set; } = new List<MockAccount>();
 
         #endregion
 
@@ -54,10 +54,9 @@ namespace DataLoader
         /// </summary>
         /// <param name="connectionString">The connection string for the CRM system.</param>
         /// <param name="mockFilePath">The path to the mock data files.</param>
-        public DataIngestor(string connectionString, string mockFilePath)
+        public DataIngestor(string connectionString)
         {
             ConnectionString = connectionString;
-            MockFilePath = mockFilePath;
         }
 
         /// <summary>
@@ -87,55 +86,6 @@ namespace DataLoader
             Console.ForegroundColor = color;
             Console.WriteLine(message);
             Console.ResetColor();
-        }
-
-        /// <summary>
-        /// Loads the mock data from CSV files.
-        /// </summary>
-        public void LoadMockData()
-        {
-            LoadCsvData();
-        }
-
-        /// <summary>
-        /// Loads the CSV data into lists of mock contacts and accounts.
-        /// </summary>
-        private void LoadCsvData()
-        {
-            var contacts = new List<MockContact>();
-            string contactMockFile = Path.Combine(MockFilePath + @"\contacts1.csv");
-            string accountMockFile = Path.Combine(MockFilePath + @"\accounts1.csv");
-
-            if (!File.Exists(contactMockFile))
-            {
-                WriteColoredMessage("File not found: " + contactMockFile, ConsoleColor.Red);
-                return;
-            }
-
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                HasHeaderRecord = true,
-                PrepareHeaderForMatch = args => args.Header.ToLower(),
-            };
-
-            using (var reader = new StreamReader(contactMockFile))
-            using (var csv = new CsvReader(reader, config))
-            {
-                contacts = csv.GetRecords<MockContact>().ToList();
-            }
-            MockContacts = contacts;
-
-            if (!File.Exists(accountMockFile))
-            {
-                WriteColoredMessage("File not found: " + accountMockFile, ConsoleColor.Red);
-                return;
-            }
-
-            using (var reader = new StreamReader(accountMockFile))
-            using (var csv = new CsvReader(reader, config))
-            {
-                MockAccounts = csv.GetRecords<MockAccount>().ToList();
-            }
         }
 
         /// <summary>
@@ -184,8 +134,6 @@ namespace DataLoader
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            LoadCsvData();
-
             ServiceClient serviceClient;
             Entity? randomAccount = GetRandomAccount();
             if (randomAccount == null)
@@ -203,22 +151,18 @@ namespace DataLoader
                     WriteColoredMessage("Adding contacts to account: " + randomAccount["name"], ConsoleColor.Yellow, true);
                     for (int i = 0; i < MaxRecords; i++)
                     {
-                        Random random = new Random();
-                        int randomIndex = random.Next(MockContacts.Count);
-                        MockContact mc = MockContacts[randomIndex];
-
                         Entity contact = new Entity("contact");
-                        contact["firstname"] = mc.first_name;
-                        contact["lastname"] = mc.last_name;
-                        contact["emailaddress1"] = mc.email;
+                        contact["firstname"] = "First " + GetRandomNumberAsString();
+                        contact["lastname"] = "Last " + GetRandomNumberAsString();
+                        contact["emailaddress1"] = GetRandomNumberAsString() + "user@example.com";
                         contact["parentcustomerid"] = randomAccount.ToEntityReference();
                         Guid contactId = serviceClient.Create(contact);
                         contact = serviceClient.Retrieve("contact", contactId, new ColumnSet(true));
                         WriteColoredMessage("Added contact: " + contact["fullname"], ConsoleColor.Yellow, true);
 
                         Entity task = new Entity("task");
-                        task["subject"] = "Follow up with " + mc.first_name + " " + mc.last_name;
-                        task["description"] = "Follow up with " + mc.first_name + " " + mc.last_name;
+                        task["subject"] = "Follow up with " + contact.Attributes["fullname"];
+                        task["description"] = "Follow up with " + contact.Attributes["fullname"];
                         task["scheduledstart"] = DateTime.Now.AddDays(1);
                         task["scheduledend"] = DateTime.Now.AddDays(2);
                         task["regardingobjectid"] = contact.ToEntityReference();
@@ -226,8 +170,8 @@ namespace DataLoader
                         WriteColoredMessage("Added task: " + task["subject"], ConsoleColor.Yellow, true);
 
                         Entity appointment = new Entity("appointment");
-                        appointment["subject"] = "Meeting with " + mc.first_name + " " + mc.last_name;
-                        appointment["description"] = "Meeting with " + mc.first_name + " " + mc.last_name;
+                        appointment["subject"] = "Meeting with " + contact.Attributes["fullname"];
+                        appointment["description"] = "Meeting with " + contact.Attributes["fullname"];
                         appointment["scheduledstart"] = DateTime.Now.AddDays(3);
                         appointment["scheduledend"] = DateTime.Now.AddDays(4);
                         appointment["regardingobjectid"] = contact.ToEntityReference();
@@ -238,6 +182,12 @@ namespace DataLoader
             }
             timer.Stop();
             WriteColoredMessage("AddContactsToAccountsFromMockData took " + timer.Elapsed.TotalMilliseconds + " milliseconds.", ConsoleColor.Green);
+        }
+
+        private string GetRandomNumberAsString()
+        {
+            Random random = new Random();
+            return random.Next(10000, 99999).ToString();
         }
 
         /// <summary>
@@ -280,29 +230,29 @@ namespace DataLoader
         /// <summary>
         /// Represents a mock contact.
         /// </summary>
-        public class MockContact
-        {
-            public string id { get; set; } = string.Empty;
-            public string first_name { get; set; } = string.Empty;
-            public string last_name { get; set; } = string.Empty;
-            public string email { get; set; } = string.Empty;
-            public string gender { get; set; } = string.Empty;
-            public string City { get; set; } = string.Empty;
-            public string city { get; set; } = string.Empty;
-            public string country_code { get; set; } = string.Empty;
-        }
+        //public class MockContact
+        //{
+        //    public string id { get; set; } = string.Empty;
+        //    public string first_name { get; set; } = string.Empty;
+        //    public string last_name { get; set; } = string.Empty;
+        //    public string email { get; set; } = string.Empty;
+        //    public string gender { get; set; } = string.Empty;
+        //    public string City { get; set; } = string.Empty;
+        //    public string city { get; set; } = string.Empty;
+        //    public string country_code { get; set; } = string.Empty;
+        //}
 
         /// <summary>
         /// Represents a mock account.
         /// </summary>
-        public class MockAccount
-        {
-            public string organization_name { get; set; } = string.Empty;
-            public int founded_year { get; set; }
-            public string hq_city { get; set; } = string.Empty;
-            public int employee_count { get; set; }
-            public string ceo_name { get; set; } = string.Empty;
-            public string stock_symbol { get; set; } = string.Empty;
-        }
+        //public class MockAccount
+        //{
+        //    public string organization_name { get; set; } = string.Empty;
+        //    public int founded_year { get; set; }
+        //    public string hq_city { get; set; } = string.Empty;
+        //    public int employee_count { get; set; }
+        //    public string ceo_name { get; set; } = string.Empty;
+        //    public string stock_symbol { get; set; } = string.Empty;
+        //}
     }
 }

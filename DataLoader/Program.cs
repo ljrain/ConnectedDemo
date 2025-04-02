@@ -17,9 +17,7 @@ internal class Program
 
         string CONNECTION_STRING = args[0];
 
-        string MOCK_FILE_PATH = "mockdata";
-
-        DataLoader.DataIngestor dataIngestor = new DataLoader.DataIngestor(CONNECTION_STRING, MOCK_FILE_PATH);
+        DataLoader.DataIngestor dataIngestor = new DataLoader.DataIngestor(CONNECTION_STRING);
         dataIngestor.Execute();
 
         Console.WriteLine("Data Loader (Connected Demo) - Done");

@@ -8,23 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="mockdata\contacts2.csv" />
-    <None Remove="mockdata\contacts3.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="mockdata\contacts1.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="mockdata\contacts2.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="mockdata\contacts3.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="bin\Debug\net8.0\mockdata\accounts1.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
