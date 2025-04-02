@@ -39,13 +39,16 @@ jobs:
       run: dotnet build --configuration Release
 
     - name: Directory check
-      run: dir
+      run: |
+        cd DataLoader
+        dir
 
     - name: Find the executable
       id: find-executable
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
+         cd DataLoader
          cd bin
          cd Release
          cd net8.0
