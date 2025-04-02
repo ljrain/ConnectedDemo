@@ -77,12 +77,12 @@ namespace DataLoader
         /// <param name="overwrite">Whether to overwrite the current line.</param>
         private void WriteMessage(string message, bool overwrite = false)
         {
-            if (overwrite)
-            {
-                Console.SetCursorPosition(0, Console.CursorTop);
-                Console.Write(new string(' ', Console.WindowWidth)); // Clear the line
-                Console.SetCursorPosition(0, Console.CursorTop - 1); // Move cursor back to the start of the line
-            }
+            //if (overwrite)
+            //{
+            //    Console.SetCursorPosition(0, Console.CursorTop);
+            //    Console.Write(new string(' ', Console.WindowWidth)); // Clear the line
+            //    Console.SetCursorPosition(0, Console.CursorTop - 1); // Move cursor back to the start of the line
+            //}
             Console.WriteLine(message);
         }
 
