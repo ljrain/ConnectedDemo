@@ -1,0 +1,59 @@
+name: Build Execute Data Loader
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # Every 30 minutes
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    environment: Tracker-Environment 
+
+    steps:
+    - name: Set up environment variables
+      run: |
+        echo "Secret: ${{ secrets.DATAVERSE_CONNECTION_STRING }}"
+        echo "vars: ${{ vars.DATAVERSE_CONNECTION_STRING }}"
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Directory check
+      run: |
+        cd DataLoader
+        dir
+
+    - name: Find the executable
+      id: find-executable
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: |
+         cd DataLoader
+         cd bin
+         cd Release
+         cd net8.0
+         dir
+         .\DataLoader.exe "AuthType=ClientSecret;ClientId=70dbbbb5-71bd-45d5-a23b-f23149d30c73;ClientSecret=1F58Q~F8aLc1gZ0MUnCNxypvUUm7fPNhQcq5JbT1;Url=https://ljr-dev1.crm9.dynamics.com/" "InstrumentationKey=4e519c0d-e9b8-4d81-8208-4d3ae6a3a026;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=40759e0c-cc30-4f4c-8c03-19dfe5eb8a65"
+      
+    - name: Directory check
+      run: dir
