@@ -35,7 +35,7 @@ namespace DataLoader
         /// <summary>
         /// Gets or sets the maximum number of records to process.
         /// </summary>
-        public int MaxRecords { get; set; } = 5;
+        public int MaxRecords { get; set; } = 50;
 
         /// <summary>
         /// Gets or sets the list of mock contacts.
@@ -175,12 +175,28 @@ namespace DataLoader
                         appointment["regardingobjectid"] = contact.ToEntityReference();
                         Guid appointmentId = serviceClient.Create(appointment);
                         WriteMessage("Added appointment: " + appointment["subject"], true);
+
+                        WriteMessage("Adding 250 e-activities for " + contact.Attributes["fullname"], true);
+                        for (int x = 0; x < 250; x++)
+                        {
+                            Entity eActivity = new Entity("ljr_eactvitity");
+                            eActivity["ljr_name"] = "Activity for " + contact.Attributes["fullname"];
+                            eActivity["ljr_json"] = GenerateEActivityJson(contact["fullname"].ToString(), randomAccount["name"].ToString());
+                            eActivity["ljr_account"] = randomAccount.ToEntityReference();
+                            Guid eActivityId = serviceClient.Create(eActivity);
+                        }
                     }
                 }
             }
             timer.Stop();
             WriteMessage("AddContactsToAccountsFromMockData took " + timer.Elapsed.TotalMilliseconds + " milliseconds.");
         }
+
+        private string GenerateEActivityJson(string contactName, string accountName)
+        {
+            return $"{{ \"contact\": \"{contactName}\", \"account\": \"{accountName}\", \"data\": {{ \"timestamp\": \"880\", \"duration\": \"123\" }} }}";
+        }
+
 
         private string GetRandomNumberAsString()
         {
@@ -225,32 +241,5 @@ namespace DataLoader
 
         #endregion
 
-        /// <summary>
-        /// Represents a mock contact.
-        /// </summary>
-        //public class MockContact
-        //{
-        //    public string id { get; set; } = string.Empty;
-        //    public string first_name { get; set; } = string.Empty;
-        //    public string last_name { get; set; } = string.Empty;
-        //    public string email { get; set; } = string.Empty;
-        //    public string gender { get; set; } = string.Empty;
-        //    public string City { get; set; } = string.Empty;
-        //    public string city { get; set; } = string.Empty;
-        //    public string country_code { get; set; } = string.Empty;
-        //}
-
-        /// <summary>
-        /// Represents a mock account.
-        /// </summary>
-        //public class MockAccount
-        //{
-        //    public string organization_name { get; set; } = string.Empty;
-        //    public int founded_year { get; set; }
-        //    public string hq_city { get; set; } = string.Empty;
-        //    public int employee_count { get; set; }
-        //    public string ceo_name { get; set; } = string.Empty;
-        //    public string stock_symbol { get; set; } = string.Empty;
-        //}
     }
 }
