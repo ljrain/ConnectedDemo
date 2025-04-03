@@ -183,6 +183,7 @@ namespace DataLoader
                             eActivity["ljr_name"] = "Activity for " + contact.Attributes["fullname"];
                             eActivity["ljr_json"] = GenerateEActivityJson(contact["fullname"].ToString(), randomAccount["name"].ToString());
                             eActivity["ljr_account"] = randomAccount.ToEntityReference();
+                            eActivity["ttlinseconds"] = 86400 * 7; // time to live is 7 days
                             Guid eActivityId = serviceClient.Create(eActivity);
                         }
                     }
