@@ -176,6 +176,16 @@ namespace DataLoader
                         Guid appointmentId = serviceClient.Create(appointment);
                         WriteMessage("Added appointment: " + appointment["subject"], true);
 
+                        WriteMessage("Adding 15 service requests for " + contact.Attributes["fullname"], true);
+                        for (int x = 0; x < 15; x++)
+                        {
+                            Entity serviceReq = new Entity("ljr_servicerequest");
+                            serviceReq["ljr_name"] = "Service Request for " + contact.Attributes["fullname"];
+                            serviceReq["ljr_userstory"] = "As a Data Anaylst I need to be able to work with the data in a fast manner SO i can get this done.";
+                            serviceReq["ljr_customer"] = randomAccount.ToEntityReference();
+                            Guid serviceReqId = serviceClient.Create(serviceReq);
+                        }
+                        
                         WriteMessage("Adding 250 e-activities for " + contact.Attributes["fullname"], true);
                         for (int x = 0; x < 250; x++)
                         {
