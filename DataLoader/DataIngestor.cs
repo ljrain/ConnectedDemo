@@ -176,8 +176,8 @@ namespace DataLoader
                         Guid appointmentId = serviceClient.Create(appointment);
                         WriteMessage("Added appointment: " + appointment["subject"], true);
 
-                        WriteMessage("Adding 15 service requests for " + contact.Attributes["fullname"], true);
-                        for (int x = 0; x < 15; x++)
+                        WriteMessage("Adding 5 service requests for " + contact.Attributes["fullname"], true);
+                        for (int x = 0; x < 5; x++)
                         {
                             Entity serviceReq = new Entity("ljr_servicerequest");
                             serviceReq["ljr_name"] = "Service Request for " + contact.Attributes["fullname"];
@@ -186,14 +186,14 @@ namespace DataLoader
                             Guid serviceReqId = serviceClient.Create(serviceReq);
                         }
                         
-                        WriteMessage("Adding 250 e-activities for " + contact.Attributes["fullname"], true);
-                        for (int x = 0; x < 250; x++)
+                        WriteMessage("Adding 5 e-activities for " + contact.Attributes["fullname"], true);
+                        for (int x = 0; x < 5; x++)
                         {
                             Entity eActivity = new Entity("ljr_eactvitity");
                             eActivity["ljr_name"] = "Activity for " + contact.Attributes["fullname"];
                             eActivity["ljr_json"] = GenerateEActivityJson(contact["fullname"].ToString(), randomAccount["name"].ToString());
                             eActivity["ljr_account"] = randomAccount.ToEntityReference();
-                            eActivity["ttlinseconds"] = 86400 * 7; // time to live is 7 days
+                            eActivity["ttlinseconds"] = 86400 * 1; // time to live is 7 days
                             Guid eActivityId = serviceClient.Create(eActivity);
                         }
                     }
